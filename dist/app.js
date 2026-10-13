@@ -118,28 +118,13 @@ addEventListener('blur', hideCursor);
 addEventListener('keydown', e => { if (e.key === 'Tab') hideCursor(); });
 reduced.addEventListener('change', () => { hideCursor(); if (reduced.matches) { heroImage.style.transform = 'none'; $$('.reveal').forEach(el => el.classList.add('visible')); } });
 
-const menu = $('#menu-dialog'), booking = $('#booking-dialog');
+const booking = $('#booking-dialog');
 let returnFocus;
 function showDialog(dialog, trigger) { closeNav(); returnFocus = trigger; dialog.append(cursor); dialog.showModal(); document.body.style.overflow = 'hidden'; hideCursor(); }
 $$('dialog').forEach(dialog => {
   $('.close', dialog).addEventListener('click', () => dialog.close());
   dialog.addEventListener('click', e => { const r = dialog.getBoundingClientRect(); if (e.target === dialog && (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom)) dialog.close(); });
   dialog.addEventListener('close', () => { document.body.append(cursor); hideCursor(); document.body.style.overflow = ''; returnFocus?.focus(); });
-});
-const menus = {
-  food: [ ['seafood', 'Scallop & lobster', 'Sea herbs, charred fennel, shellfish foam.'], ['duck', 'Roast duck', 'Young carrots, sweet onion, garden greens and a deep, glossy jus.'], ['dessert', 'Chocolate & wild berries', 'Dark chocolate, berry sorbet, pistachio crumble and edible flowers.'] ],
-  drinks: [ ['white', 'Something crisp', 'A bright, mineral white. Beautiful with a little taste of the sea.'], ['red', 'Something bold', 'A generous red, chosen for long conversations and rich plates.'], ['bubbles', 'A little celebration', 'Chilled bubbles. An occasion entirely optional.'], ['zero', 'All the spirit, zero alcohol', 'Seasonal fruit, fresh herbs, a little sparkle.'] ]
-};
-function setMenu(category, highlight) {
-  $$('.menu-tabs button').forEach(button => { const active = button.dataset.category === category; button.setAttribute('aria-selected', String(active)); button.tabIndex = active ? 0 : -1; });
-  $('#menu-panel').setAttribute('aria-labelledby', `tab-${category}`);
-  $('#menu-panel').innerHTML = menus[category].map(([id, name, detail]) => `<article class="menu-item"${id === highlight ? ' style="background:#501e2b0a;padding-left:14px"' : ''}><h3>${name}</h3><p>${detail}</p></article>`).join('');
-}
-$$('[data-menu]').forEach(button => button.addEventListener('click', () => { setMenu(button.dataset.menu === 'drinks' ? 'drinks' : 'food'); showDialog(menu, button); }));
-$$('[data-dish]').forEach(button => button.addEventListener('click', () => { setMenu('food', button.dataset.dish); showDialog(menu, button); }));
-$$('.menu-tabs button').forEach(button => {
-  button.addEventListener('click', () => setMenu(button.dataset.category));
-  button.addEventListener('keydown', e => { if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) { e.preventDefault(); const category = e.key === 'Home' ? 'food' : e.key === 'End' ? 'drinks' : button.dataset.category === 'food' ? 'drinks' : 'food'; setMenu(category); $(`[data-category="${category}"]`).focus(); } });
 });
 const dateInput = $('input[name=date]');
 function localDate() { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; }
